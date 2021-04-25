@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct PastRentalsView: View {
+struct RatedBooksView: View {
     var body: some View {
-        Text("Past rentals")
+        Text("Books you've already rated")
     }
 }
 
-struct PastRentalsView_Previews: PreviewProvider {
+struct RatedBooksView_Previews: PreviewProvider {
     static var previews: some View {
-        PastRentalsView()
+        RatedBooksView()
     }
 }

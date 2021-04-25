@@ -15,3 +15,7 @@ struct Library21App: App {
         }
     }
 }
+
+struct Constants {
+    static let baseUrl = "http://192.168.0.80:8080"
+}
