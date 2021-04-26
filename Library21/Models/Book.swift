@@ -17,21 +17,11 @@ struct Book : Identifiable, Codable {
     let description:String
     let bookInstanceIds:[Int64]
     
-    init(id:Int64, title:String, authors:[Author], genreId:Int64, yearOfFirstRelease:Int64, description:String, bookInstanceIds:[Int64]) {
-        self.id = id
-        self.title = title
-        self.authors = authors
-        self.genreId = genreId
-        self.yearOfFirstRelease = yearOfFirstRelease
-        self.description = description
-        self.bookInstanceIds = bookInstanceIds
-    }
-    
-    func printAuthors() -> String {
+    var authorsString:String {
         if (authors.count == 0) {
             return "Unknown author"
         }
-        var authorsString = "by "
+        var authorsString = ""
         var counter = 1
         
         for author in authors {
@@ -44,28 +34,32 @@ struct Book : Identifiable, Codable {
         
         return authorsString
     }
-    
-    func printReleaseYear() -> String {
-        return "(\(yearOfFirstRelease))"
-    }
 }
 
 struct BookView: View {
-    var book: Book
+    let book: Book
+    let genre: Genre
 
     var body: some View {
         
         HStack {
             VStack {
                 HStack {
-                    Text(book.title).padding([.top]).font(.title2)
+                    Text(book.title)
+                        .padding([.top, .trailing])
+                        .font(.title2)
                     Spacer()
-                    Text(book.printReleaseYear()).padding([.top, .leading])
+                    Text("(" + String(book.yearOfFirstRelease) + ")")
+                        .padding([.top, .leading])
                 }
                 
                 HStack {
-                    Text(book.printAuthors()).padding([.bottom]).font(.subheadline)
+                    Text(book.authorsString)
+                        .padding([.bottom, .trailing])
+                        .font(.subheadline)
                     Spacer()
+                    Text(genre.name)
+                        .padding([.bottom, .leading])
                 }
                 Text("Copies available: \(book.bookInstanceIds.count)")
             }
