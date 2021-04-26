@@ -10,17 +10,20 @@ import SwiftUI
 struct MainView: View {
     var body: some View {
         TabView {
-            CurrentRentalsView()
-                .tabItem {
-                    Label("Current", systemImage: "book")
-                }
-            PastRentalsView()
-                .tabItem {
-                    Label("Past", systemImage: "flame")
-                }
-            SuggestedRentalsView()
+            
+            SuggestionsView()
                 .tabItem {
                     Label("Suggestions", systemImage: "star")
+                }
+            
+            BrowseBooksView()
+                .tabItem {
+                    Label("Browse", systemImage: "book")
+                }
+            
+            RatedBooksView()
+                .tabItem {
+                    Label("Rated", systemImage: "flame")
                 }
             
             AccountView()

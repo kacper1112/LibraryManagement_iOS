@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SuggestedRentalsView: View {
+struct SuggestionsView: View {
     var body: some View {
         Text("Suggested Rentals")
     }
@@ -15,6 +15,6 @@ struct SuggestedRentalsView: View {
 
 struct SuggestedRentalsView_Previews: PreviewProvider {
     static var previews: some View {
-        SuggestedRentalsView()
+        SuggestionsView()
     }
 }
