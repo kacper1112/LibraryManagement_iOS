@@ -17,5 +17,5 @@ struct Library21App: App {
 }
 
 struct Constants {
-    static let baseUrl = "$(BASE_URL}"
+    static let baseUrl = ProcessInfo.processInfo.environment["BASE_URL"] ?? ""
 }

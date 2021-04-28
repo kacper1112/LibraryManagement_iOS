@@ -1,5 +1,5 @@
 //
-//  BookInstance.swift
+//  BookCopy.swift
 //  Library21
 //
 //  Created by Jędrzej Racibor on 26/04/2021.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct BookInstance : Identifiable, Codable {
+struct BookCopy : Identifiable, Codable {
     private static var dateFormatter = prepareFormatter()
     
     let id:Int64
@@ -34,7 +34,7 @@ struct BookInstance : Identifiable, Codable {
             if (dueDate == nil) {
                 return ""
             }
-            return BookInstance.dateFormatter.string(from: dueDateAsDate!)
+            return BookCopy.dateFormatter.string(from: dueDateAsDate!)
         }
     }
     

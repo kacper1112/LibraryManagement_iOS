@@ -8,35 +8,35 @@
 import Foundation
 import SwiftUI
 
-struct BookInstanceView: View {
+struct BookCopyView: View {
     let book: Book
-    let bookInstance: BookInstance
+    let bookCopy: BookCopy
     
     var body: some View {
-        let backgroundColor = bookInstance.available ? nil : Color.gray.opacity(0.3)
+        let backgroundColor = bookCopy.available ? nil : Color.gray.opacity(0.3)
         VStack (alignment: .leading, spacing: 5) {
             VStack (alignment: .center) {
                 HStack {
-                    let title = bookInstance.alternativeTitle == nil ? book.title : bookInstance.alternativeTitle
+                    let title = bookCopy.alternativeTitle == nil ? book.title : bookCopy.alternativeTitle
                     Text(title!)
                         .font(.headline)
                         .padding(.trailing)
                     Spacer()
-                    Text("\(bookInstance.publisherName), " + String(bookInstance.yearOfRelease))
+                    Text("\(bookCopy.publisherName), " + String(bookCopy.yearOfRelease))
                         .font(.footnote)
                         .padding(.leading)
                 }
                 HStack {
-                    Text("Language: \(bookInstance.languageCode)")
+                    Text("Language: \(bookCopy.languageCode)")
                         .font(.footnote)
                         .padding(.trailing)
                     Spacer()
-                    Text("Pages: \(bookInstance.pagesCount)")
+                    Text("Pages: \(bookCopy.pagesCount)")
                         .font(.footnote)
                         .padding(.leading)
                 }
             }
-            if (bookInstance.available) {
+            if (bookCopy.available) {
                 VStack (alignment: .leading) {
                     (Text("Book ")
                         .font(.footnote)
@@ -53,7 +53,7 @@ struct BookInstanceView: View {
                             .font(.footnote)
                             .padding(.trailing)
                         Spacer()
-                        Text("Due date: \(bookInstance.dueDateFormatted)")
+                        Text("Due date: \(bookCopy.dueDateFormatted)")
                             .font(.footnote)
                             .padding(.leading)
                     }

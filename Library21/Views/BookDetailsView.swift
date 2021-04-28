@@ -11,7 +11,7 @@ import SwiftUI
 struct BookDetailsView: View {
     let book: Book
     let genre: Genre
-    @State private var bookInstances = [BookInstance]()
+    @State private var bookCopies = [BookCopy]()
     @State private var revealDetails = false
     
     var body: some View {
@@ -65,8 +65,8 @@ struct BookDetailsView: View {
                 VStack(alignment: .center, spacing: 0) {
                     DisclosureGroup(isExpanded: $revealDetails) {
                         VStack(alignment: .leading, spacing: 5) {
-                            ForEach(0 ..< bookInstances.count, id: \.self) { index in
-                                BookInstanceView(book: book, bookInstance: bookInstances[index])
+                            ForEach(bookCopies) { bookCopy in 
+                                BookCopyView(book: book, bookCopy: bookCopy)
                                 Divider()
                             }
                         }
@@ -104,18 +104,19 @@ struct BookDetailsView: View {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
-                var decodedResponse : [BookInstance]?
+                var decodedResponse : [BookCopy]?
                 do {
-                    decodedResponse = try JSONDecoder().decode([BookInstance].self, from: data)
+                    decodedResponse = try JSONDecoder().decode([BookCopy].self, from: data)
                 } catch {
                     print(error)
                     return
                 }
                 DispatchQueue.main.async {
-                    self.bookInstances = decodedResponse!.sorted { ($0.dueDateAsDate ?? .distantPast) < ($1.dueDateAsDate ?? .distantPast) }
+                    self.bookCopies = decodedResponse!.sorted { ($0.dueDateAsDate ?? .distantPast) < ($1.dueDateAsDate ?? .distantPast) }
                 }
                 return
             }
+            
             print("Fetching book instances data failed: \(error?.localizedDescription ?? "Unknown error")")
         }.resume()
     }
