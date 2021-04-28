@@ -17,5 +17,5 @@ struct Library21App: App {
 }
 
 struct Constants {
-    static let baseUrl = "http://192.168.0.80:8080"
+    static let baseUrl = ProcessInfo.processInfo.environment["BASE_URL"] ?? ""
 }

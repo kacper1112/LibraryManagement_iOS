@@ -12,12 +12,17 @@ struct BrowseBooksView: View {
     @State private var genres = [Genre]()
     
     var body: some View {
-        List(books) { book in
-            BookView(book: book, genre: findGenre(book.genreId))
+        NavigationView {
+            List(books) { book in
+                let genre = findGenre(book.genreId)
+                NavigationLink(destination: BookDetailsView(book: book, genre: genre)) {
+                    BookView(book: book, genre: genre)
+                }
+            }
+            .navigationBarTitle("Browse")
         }
         .onAppear(perform: loadGenres)
         .onAppear(perform: loadBooks)
-    
     }
     
     func findGenre(_ genreId:Int64) -> Genre {
