@@ -92,7 +92,7 @@ struct BookDetailsView: View {
     }
     
     func loadInstances(_ bookId : Int64) {
-        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/bookInstance/getAllByBookId") else {
+        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/copies/availabilityByBookId") else {
             print("Invalid loadInstances URL")
             return
         }
@@ -102,29 +102,21 @@ struct BookDetailsView: View {
         
         let request = URLRequest(url: urlComponent.url!)
         
-        
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
-                if let decodedResponse = try?
-                    JSONDecoder().decode([BookInstance].self, from: data) {
-                    DispatchQueue.main.async {
-                        self.bookInstances = decodedResponse.sorted { ($0.dueDate ?? .distantPast) < ($1.dueDate ?? .distantPast) }
-                    }
+                var decodedResponse : [BookInstance]?
+                do {
+                    decodedResponse = try JSONDecoder().decode([BookInstance].self, from: data)
+                } catch {
+                    print(error)
                     return
                 }
+                DispatchQueue.main.async {
+                    self.bookInstances = decodedResponse!.sorted { ($0.dueDateAsDate ?? .distantPast) < ($1.dueDateAsDate ?? .distantPast) }
+                }
+                return
             }
             print("Fetching book instances data failed: \(error?.localizedDescription ?? "Unknown error")")
-//            DispatchQueue.main.async {
-//                self.bookInstances = [
-//                    BookInstance(id: 1, alternativeTitle: "XD1", bookId: 1, languageCode: "pl-PL", publisherName: "Znak", yearOfRelease: 2022, pagesCount: 32, available: true, dueDate: nil),
-//                    BookInstance(id: 1, alternativeTitle: "XD2", bookId: 2, languageCode: "pl-PL", publisherName: "Znak", yearOfRelease: 2022, pagesCount: 32, available: false, dueDate: Date()),
-//                    BookInstance(id: 1, alternativeTitle: "XD1", bookId: 1, languageCode: "pl-PL", publisherName: "Znak", yearOfRelease: 2022, pagesCount: 32, available: true, dueDate: nil),
-//                    BookInstance(id: 1, alternativeTitle: "XD2", bookId: 2, languageCode: "pl-PL", publisherName: "Znak", yearOfRelease: 2022, pagesCount: 32, available: false, dueDate: Date()),
-//                    BookInstance(id: 1, alternativeTitle: "XD1", bookId: 1, languageCode: "pl-PL", publisherName: "Znak", yearOfRelease: 2022, pagesCount: 32, available: true, dueDate: nil),
-//                    BookInstance(id: 1, alternativeTitle: "XD2", bookId: 2, languageCode: "pl-PL", publisherName: "Znak", yearOfRelease: 2022, pagesCount: 32, available: false, dueDate: Date())
-//                ].sorted { ($0.dueDate ?? .distantPast) < ($1.dueDate ?? .distantPast) }
-//            }
-            
         }.resume()
     }
 }

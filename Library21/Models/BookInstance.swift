@@ -19,11 +19,22 @@ struct BookInstance : Identifiable, Codable {
     let yearOfRelease:Int32
     let pagesCount:Int32
     let available:Bool
-    let dueDate:Date?
+    private let dueDate:String?
+    var dueDateAsDate : Date? {
+        get {
+            if (dueDate == nil) {
+                return nil
+            }
+            return DateFormatter.iso8601Full.date(from: dueDate!)!
+        }
+    }
     
     var dueDateFormatted : String {
         get {
-            BookInstance.dateFormatter.string(from: dueDate!)
+            if (dueDate == nil) {
+                return ""
+            }
+            return BookInstance.dateFormatter.string(from: dueDateAsDate!)
         }
     }
     

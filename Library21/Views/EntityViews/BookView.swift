@@ -33,7 +33,7 @@ struct BookView: View {
                     Text(genre.name)
                         .padding([.bottom, .leading])
                 }
-                Text("Copies available: \(book.bookInstanceIds.count)")
+                Text("Copies available: \(book.numberOfAvailableCopies)")
             }
         }
     }
