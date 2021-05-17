@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct Library21App: App {
+    @StateObject var sessionStore = LibraryService()
+
     var body: some Scene {
         WindowGroup {
-            MainView()
+            MainView().environmentObject(sessionStore)
         }
     }
 }
