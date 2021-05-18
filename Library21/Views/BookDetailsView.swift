@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 struct BookDetailsView: View {
+    @EnvironmentObject private var session: LibraryService
+
     let book: Book
     let genre: Genre
     @State private var bookCopies = [BookCopy]()
@@ -52,7 +54,7 @@ struct BookDetailsView: View {
                         .font(.title3)
                         .bold()
                     Divider()
-                    Text(book.description)
+                    Text(book.description ?? "")
                         .font(.callout)
                         .multilineTextAlignment(.leading)
                         .lineLimit(10)
@@ -87,37 +89,13 @@ struct BookDetailsView: View {
         .padding()
         .navigationBarTitle(Text(book.title), displayMode: .inline)
         .onAppear {
-            loadInstances(book.id)
+            loadCopies(book.id)
         }
     }
     
-    func loadInstances(_ bookId : Int64) {
-        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/copies/availabilityByBookId") else {
-            print("Invalid loadInstances URL")
-            return
+    func loadCopies(_ bookId : Int64) {
+        session.loadCopies(bookId) { bookCopies in
+            self.bookCopies = bookCopies.sorted { ($0.dueDateAsDate ?? .distantPast) < ($1.dueDateAsDate ?? .distantPast) }
         }
-        urlComponent.queryItems = [
-            URLQueryItem(name: "bookId", value: String(bookId))
-        ]
-        
-        let request = URLRequest(url: urlComponent.url!)
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                var decodedResponse : [BookCopy]?
-                do {
-                    decodedResponse = try JSONDecoder().decode([BookCopy].self, from: data)
-                } catch {
-                    print(error)
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.bookCopies = decodedResponse!.sorted { ($0.dueDateAsDate ?? .distantPast) < ($1.dueDateAsDate ?? .distantPast) }
-                }
-                return
-            }
-            
-            print("Fetching book instances data failed: \(error?.localizedDescription ?? "Unknown error")")
-        }.resume()
     }
 }

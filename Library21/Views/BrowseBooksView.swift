@@ -8,18 +8,31 @@
 import SwiftUI
 
 struct BrowseBooksView: View {
+    @EnvironmentObject private var session: LibraryService
+
+    @State private var booksLoaded = false
     @State private var books = [Book]()
     @State private var genres = [Genre]()
     
     var body: some View {
-        NavigationView {
-            List(books) { book in
-                let genre = findGenre(book.genreId)
-                NavigationLink(destination: BookDetailsView(book: book, genre: genre)) {
-                    BookView(book: book, genre: genre)
+        ZStack {
+            if !booksLoaded {
+                VStack {
+                    Text("Loading books. Please wait...")
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                }
+            } else {
+                NavigationView {
+                    List(books) { book in
+                        let genre = findGenre(book.genreId)
+                        NavigationLink(destination: BookDetailsView(book: book, genre: genre)) {
+                            BookView(book: book, genre: genre)
+                        }
+                    }
+                    .navigationBarTitle("Browse")
                 }
             }
-            .navigationBarTitle("Browse")
         }
         .onAppear(perform: loadGenres)
         .onAppear(perform: loadBooks)
@@ -35,48 +48,16 @@ struct BrowseBooksView: View {
     }
     
     func loadGenres() {
-        guard let url = URL(string: "\(Constants.baseUrl)/api/genres") else {
-            print("Invalid loadGenres URL")
-            return
+        session.loadGenres { genres in
+            self.genres = genres
         }
-        
-        let request = URLRequest(url: url)
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                if let decodedResponse = try?
-                    JSONDecoder().decode([Genre].self, from: data) {
-                    DispatchQueue.main.async {
-                        self.genres = decodedResponse
-                    }
-                    return
-                }
-            }
-            print("Fetching genres data failed: \(error?.localizedDescription ?? "Unknown error")")
-        }.resume()
     }
     
     func loadBooks() {
-        guard let url = URL(string: "\(Constants.baseUrl)/api/books/display") else {
-            print("Invalid loadBooks URL")
-            return
+        session.loadBooks { books in
+            self.books = books
+            booksLoaded = true
         }
-        
-        let request = URLRequest(url: url)
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                if let decodedResponse = try?
-                    JSONDecoder().decode([Book].self, from: data) {
-                    DispatchQueue.main.async {
-                        self.books = decodedResponse
-                    }
-                    return
-                }
-            }
-            
-            print("Fetching books data failed: \(error?.localizedDescription ?? "Unknown error")")
-        }.resume()
     }
     
 }

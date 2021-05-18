@@ -9,13 +9,16 @@ import SwiftUI
 
 @main
 struct Library21App: App {
+    @StateObject var sessionStore = LibraryService()
+
     var body: some Scene {
         WindowGroup {
-            MainView()
+            MainView().environmentObject(sessionStore)
         }
     }
 }
 
 struct Constants {
     static let baseUrl = ProcessInfo.processInfo.environment["BASE_URL"] ?? ""
+    static let passwordMinLength = 5
 }

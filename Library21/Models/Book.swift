@@ -14,7 +14,7 @@ struct Book : Identifiable, Codable {
     let authors:[Author]
     let genreId:Int64
     let yearOfFirstRelease:Int64
-    let description:String
+    let description:String?
     let numberOfAvailableCopies:Int32
     
     var authorsString:String {

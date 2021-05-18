@@ -8,29 +8,34 @@
 import SwiftUI
 
 struct MainView: View {
+    @EnvironmentObject private var session: LibraryService
+
     var body: some View {
-        TabView {
-            
-            SuggestionsView()
-                .tabItem {
-                    Label("Suggestions", systemImage: "star")
-                }
-            
-            BrowseBooksView()
-                .tabItem {
-                    Label("Browse", systemImage: "book")
-                }
-            
-            RatedBooksView()
-                .tabItem {
-                    Label("Rated", systemImage: "flame")
-                }
-            
-            AccountView()
-                .tabItem {
-                    Label("Account", systemImage:
-                          "person")
-                }
+        if session.loggedin {
+            TabView {
+                SuggestionsView()
+                    .tabItem {
+                        Label("Suggestions", systemImage: "star")
+                    }
+                
+                BrowseBooksView()
+                    .tabItem {
+                        Label("Browse", systemImage: "book")
+                    }
+                
+                RatedBooksView()
+                    .tabItem {
+                        Label("Rated", systemImage: "flame")
+                    }
+                
+                AccountView()
+                    .tabItem {
+                        Label("Account", systemImage:
+                              "person")
+                    }
+            }
+        } else {
+            LoginView()
         }
     }
 }
