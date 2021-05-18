@@ -10,11 +10,13 @@ import SwiftUI
 
 struct BookDetailsView: View {
     @EnvironmentObject private var session: LibraryService
-
+    
     let book: Book
     let genre: Genre
     @State private var bookCopies = [BookCopy]()
+    
     @State private var revealDetails = false
+    @State private var bookRating = 10.0
     
     var body: some View {
         ScrollView {
@@ -48,6 +50,31 @@ struct BookDetailsView: View {
                 
                 Divider()
                     .padding(.bottom, 5)
+                
+                VStack {
+                    HStack {
+                        Spacer().overlay(
+                            Text("You raiting:")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        )
+                        Text("\(Int(bookRating))")
+                            .padding(.horizontal)
+                        Spacer().overlay(
+                            Button {
+                                saveRaiting(book.id, Int32(bookRating))
+                            } label : {
+                                Text("Save")
+                            }
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                        )
+                    }
+                    HStack {
+                        Text("1")
+                        Slider(value: $bookRating, in: 1...10, step: 1)
+                        Text("10")
+                    }.foregroundColor(Color.accentColor)
+                }.padding(.horizontal, 5)
+                
                 
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Description")
@@ -90,6 +117,7 @@ struct BookDetailsView: View {
         .navigationBarTitle(Text(book.title), displayMode: .inline)
         .onAppear {
             loadCopies(book.id)
+            loadRaiting(book.id)
         }
     }
     
@@ -97,5 +125,17 @@ struct BookDetailsView: View {
         session.loadCopies(bookId) { bookCopies in
             self.bookCopies = bookCopies.sorted { ($0.dueDateAsDate ?? .distantPast) < ($1.dueDateAsDate ?? .distantPast) }
         }
+    }
+    
+    func loadRaiting(_ bookId : Int64) {
+//        session.loadBookRating(bookId) { bookRating in
+//            self.bookRating = Double(bookRating.raiting)
+//        }
+    }
+    
+    func saveRaiting(_ bookId : Int64, _ raiting : Int32) {
+//        session.saveBookRating(bookId, raiting) { bookRating in
+//            self.bookRating = Double(bookRating.raiting)
+//        }
     }
 }

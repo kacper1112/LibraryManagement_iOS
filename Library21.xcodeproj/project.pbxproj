@@ -28,6 +28,8 @@
 		9535B8912652CD32007E8274 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535B8902652CD32007E8274 /* User.swift */; };
 		9535B8A026530513007E8274 /* PasswordEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535B89F26530513007E8274 /* PasswordEditView.swift */; };
 		9542BDEC2639C44800D22E5C /* DateFormatterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9542BDEB2639C44800D22E5C /* DateFormatterExtension.swift */; };
+		9550687A2654277E008C3BC3 /* BookRaiting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955068792654277E008C3BC3 /* BookRaiting.swift */; };
+		9550688026542ED4008C3BC3 /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = 9550687F26542ED4008C3BC3 /* SwiftUIRefresh */; };
 		95FB89A126376AC9002ABFF9 /* BookInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FB89A026376AC9002ABFF9 /* BookInstanceView.swift */; };
 /* End PBXBuildFile section */
 
@@ -76,6 +78,7 @@
 		9535B8902652CD32007E8274 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		9535B89F26530513007E8274 /* PasswordEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordEditView.swift; sourceTree = "<group>"; };
 		9542BDEB2639C44800D22E5C /* DateFormatterExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterExtension.swift; sourceTree = "<group>"; };
+		955068792654277E008C3BC3 /* BookRaiting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookRaiting.swift; sourceTree = "<group>"; };
 		95FB89A026376AC9002ABFF9 /* BookInstanceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookInstanceView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9550688026542ED4008C3BC3 /* SwiftUIRefresh in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +116,7 @@
 				30F1EB702636CE29005E6CBA /* Genre.swift */,
 				9535B8902652CD32007E8274 /* User.swift */,
 				3074A1C32635975E001965BB /* Author.swift */,
+				955068792654277E008C3BC3 /* BookRaiting.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -234,6 +239,9 @@
 			dependencies = (
 			);
 			name = Library21;
+			packageProductDependencies = (
+				9550687F26542ED4008C3BC3 /* SwiftUIRefresh */,
+			);
 			productName = Library21;
 			productReference = 30DD202F261278FA00ED696C /* Library21.app */;
 			productType = "com.apple.product-type.application";
@@ -305,6 +313,9 @@
 				Base,
 			);
 			mainGroup = 30DD2026261278FA00ED696C;
+			packageReferences = (
+				9550687E26542ED4008C3BC3 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */,
+			);
 			productRefGroup = 30DD2030261278FA00ED696C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -355,6 +366,7 @@
 				9535B8A026530513007E8274 /* PasswordEditView.swift in Sources */,
 				9518D1C726374F8300D76BDF /* BookDetailsView.swift in Sources */,
 				95FB89A126376AC9002ABFF9 /* BookInstanceView.swift in Sources */,
+				9550687A2654277E008C3BC3 /* BookRaiting.swift in Sources */,
 				9535B8912652CD32007E8274 /* User.swift in Sources */,
 				30DD2035261278FA00ED696C /* BrowseBooksView.swift in Sources */,
 				30CD6C1B2617A04B00BAA7E4 /* Book.swift in Sources */,
@@ -684,6 +696,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9550687E26542ED4008C3BC3 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/timbersoftware/SwiftUIRefresh.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9550687F26542ED4008C3BC3 /* SwiftUIRefresh */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9550687E26542ED4008C3BC3 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */;
+			productName = SwiftUIRefresh;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 30DD2027261278FA00ED696C /* Project object */;
 }

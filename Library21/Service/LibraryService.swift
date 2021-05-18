@@ -105,13 +105,43 @@ final class LibraryService: ObservableObject {
         }.resume()
     }
     
+    func loadBookRating(_ bookId : Int64, callback : @escaping (BookRaiting) -> Void) {
+        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating") else {
+            NSLog("Invalid loadBookRating URL")
+            return
+        }
+        urlComponent.queryItems = [
+            URLQueryItem(name: "bookId", value: String(bookId))
+        ]
+        
+        let request = URLRequest(url: urlComponent.url!)
+
+        dataTask(request, callback)
+    }
+    
+    func saveBookRating(_ bookId : Int64, _ rating : Int32, callback : @escaping (BookRaiting) -> Void) {
+        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating") else {
+            NSLog("Invalid saveBookRating URL")
+            return
+        }
+        urlComponent.queryItems = [
+            URLQueryItem(name: "bookId", value: String(bookId)),
+            URLQueryItem(name: "rating", value: String(rating))
+        ]
+        
+        var request = URLRequest(url: urlComponent.url!)
+        request.httpMethod = "POST"
+        
+        dataTask(request, callback)
+    }
+    
     func loadBooks(_ callback : @escaping ([Book]) -> Void) {
         guard let url = URL(string: "\(Constants.baseUrl)/api/books/display") else {
             NSLog("Invalid loadBooks URL")
             return
         }
                 
-        fetchListDataTask(url, callback)
+        listDataTask(url, callback)
     }
     
     func loadGenres(_ callback : @escaping ([Genre]) -> Void) {
@@ -120,7 +150,7 @@ final class LibraryService: ObservableObject {
             return
         }
                 
-        fetchListDataTask(url, callback)
+        listDataTask(url, callback)
     
     }
     
@@ -134,10 +164,10 @@ final class LibraryService: ObservableObject {
             URLQueryItem(name: "bookId", value: String(bookId))
         ]
         
-        fetchListDataTask(urlComponent.url!, callback)
+        listDataTask(urlComponent.url!, callback)
     }
     
-    private func fetchListDataTask<T : Decodable> (_ url : URL, _ callback : @escaping ([T]) -> Void) {
+    private func listDataTask<T : Decodable> (_ url : URL, _ callback : @escaping ([T]) -> Void) {
         let request = URLRequest(url: url)
 
         session!.dataTask(with: request) { data, response, error in
@@ -158,6 +188,35 @@ final class LibraryService: ObservableObject {
             var decodedResponse : [T]
             do {
                 decodedResponse = try JSONDecoder().decode([T].self, from: data)
+            } catch {
+                NSLog("\(error)")
+                return
+            }
+            DispatchQueue.main.async {
+                callback(decodedResponse)
+            }
+        }.resume()
+    }
+    
+    private func dataTask<T : Decodable> (_ request : URLRequest, _ callback : @escaping (T) -> Void) {
+        session!.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                NSLog("\(error!)")
+                return
+            }
+
+            if let httpStatus = response as? HTTPURLResponse {
+                if (httpStatus.statusCode == 401) {
+                    self.logout()
+                    return
+                }
+                if (httpStatus.statusCode >= 300) {
+                    return
+                }
+            }
+            var decodedResponse : T
+            do {
+                decodedResponse = try JSONDecoder().decode(T.self, from: data)
             } catch {
                 NSLog("\(error)")
                 return
