@@ -20,4 +20,5 @@ struct Library21App: App {
 
 struct Constants {
     static let baseUrl = ProcessInfo.processInfo.environment["BASE_URL"] ?? ""
+    static let passwordMinLength = 5
 }

@@ -36,7 +36,9 @@ struct PasswordEditView: View {
             }
         }
         .alert(isPresented: self.$incorrectPassword) {
-            Alert(title: Text("Action failed"), message: Text("Incorrect new password!"), dismissButton: .destructive(Text("Ok")))
+            Alert(title: Text("Incorrect new password!"),
+                  message: Text("Password must contain at least \(Constants.passwordMinLength) characters."),
+                  dismissButton: .destructive(Text("Ok")))
         }
     }
     
@@ -53,7 +55,9 @@ struct PasswordEditView: View {
     }
     
     private func isPasswordValid() -> Bool {
-        if !newPassword.isEmpty && newPassword == confirmedPassword {
+        if !newPassword.isEmpty
+            && newPassword.count >= Constants.passwordMinLength
+            && newPassword == confirmedPassword {
             return true
         }
         
