@@ -54,14 +54,14 @@ struct BookDetailsView: View {
                 VStack {
                     HStack {
                         Spacer().overlay(
-                            Text("You raiting:")
+                            Text("Your rating:")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         )
                         Text("\(Int(bookRating))")
                             .padding(.horizontal)
                         Spacer().overlay(
                             Button {
-                                saveRaiting(book.id, Int32(bookRating))
+                                saveRating(book.id, Int32(bookRating))
                             } label : {
                                 Text("Save")
                             }
@@ -117,7 +117,7 @@ struct BookDetailsView: View {
         .navigationBarTitle(Text(book.title), displayMode: .inline)
         .onAppear {
             loadCopies(book.id)
-            loadRaiting(book.id)
+            loadRating(book.id)
         }
     }
     
@@ -127,15 +127,15 @@ struct BookDetailsView: View {
         }
     }
     
-    func loadRaiting(_ bookId : Int64) {
+    func loadRating(_ bookId : Int64) {
 //        session.loadBookRating(bookId) { bookRating in
-//            self.bookRating = Double(bookRating.raiting)
+//            self.bookRating = Double(bookRating.rating)
 //        }
     }
     
-    func saveRaiting(_ bookId : Int64, _ raiting : Int32) {
-//        session.saveBookRating(bookId, raiting) { bookRating in
-//            self.bookRating = Double(bookRating.raiting)
+    func saveRating(_ bookId : Int64, _ rating : Int32) {
+//        session.saveBookRating(bookId, rating) { bookRating in
+//            self.bookRating = Double(bookRating.rating)
 //        }
     }
 }

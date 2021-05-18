@@ -105,7 +105,7 @@ final class LibraryService: ObservableObject {
         }.resume()
     }
     
-    func loadBookRating(_ bookId : Int64, callback : @escaping (BookRaiting) -> Void) {
+    func loadBookRating(_ bookId : Int64, callback : @escaping (BookRating) -> Void) {
         guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating") else {
             NSLog("Invalid loadBookRating URL")
             return
@@ -119,7 +119,7 @@ final class LibraryService: ObservableObject {
         dataTask(request, callback)
     }
     
-    func saveBookRating(_ bookId : Int64, _ rating : Int32, callback : @escaping (BookRaiting) -> Void) {
+    func saveBookRating(_ bookId : Int64, _ rating : Int32, callback : @escaping (BookRating) -> Void) {
         guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating") else {
             NSLog("Invalid saveBookRating URL")
             return
