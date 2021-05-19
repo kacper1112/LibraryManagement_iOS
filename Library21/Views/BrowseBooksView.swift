@@ -13,7 +13,7 @@ struct BrowseBooksView: View {
     
     @State private var isShowing = false
     @State private var booksLoaded = false
-    @State private var books = [Book]()
+    @State private var books = [BookWithCopies]()
     @State private var genres = [Genre]()
     
     var body: some View {

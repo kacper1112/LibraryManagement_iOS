@@ -1,15 +1,15 @@
 //
-//  BookView.swift
+//  BookWithRatingView.swift
 //  Library21
 //
-//  Created by Kacper Stysiński on 26/04/2021.
+//  Created by Extollite on 19/05/2021.
 //
 
 import Foundation
 import SwiftUI
 
-struct BookView: View {
-    let book: BookWithCopies
+struct BookWithRatingView: View {
+    let book: BookWithRating
     let genre: Genre
 
     var body: some View {
@@ -33,7 +33,7 @@ struct BookView: View {
                     Text(genre.name)
                         .padding([.bottom, .leading])
                 }
-                Text("Copies available: \(book.numberOfAvailableCopies)")
+                Text("Your rating: \(book.rating)")
             }
         }
     }

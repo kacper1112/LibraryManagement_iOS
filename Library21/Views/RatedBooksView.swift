@@ -6,10 +6,72 @@
 //
 
 import SwiftUI
+import SwiftUIRefresh
 
 struct RatedBooksView: View {
+    @EnvironmentObject private var session: LibraryService
+    
+    @State private var isShowing = false
+    @State private var booksLoaded = false
+    @State private var books = [BookWithRating]()
+    @State private var genres = [Genre]()
+    
     var body: some View {
-        Text("Books you've already rated")
+        ZStack {
+            if !booksLoaded {
+                VStack {
+                    Text("Loading books. Please wait...")
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                }
+            } else {
+                NavigationView {
+                    List(books) { book in
+                        let genre = findGenre(book.genreId)
+                        NavigationLink(destination: BookDetailsView(book: book, genre: genre)) {
+                            Text("\(book.id)")
+                        }
+                    }
+                    .navigationBarTitle("Rated books")
+                    .pullToRefresh(isShowing: $isShowing) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            loadData()
+                        }
+                    }
+                }
+            }
+        }
+        .onAppear(perform: loadData)
+    }
+    
+    func loadData() {
+        booksLoaded = false
+        isShowing = false
+        
+        loadGenres()
+        loadBooks()
+    }
+    
+    func findGenre(_ genreId:Int64) -> Genre {
+        for genre in genres {
+            if genre.id == genreId {
+                return genre
+            }
+        }
+        return Genre(id: -1, name: "Unknown genre")
+    }
+    
+    func loadGenres() {
+        session.loadGenres { genres in
+            self.genres = genres
+        }
+    }
+    
+    func loadBooks() {
+        session.loadBooksWithRating { books in
+            self.books = books
+            booksLoaded = true
+        }
     }
 }
 
