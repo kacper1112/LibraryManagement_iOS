@@ -11,6 +11,7 @@ final class LibraryService: ObservableObject {
     @Published var session: URLSession?
     @Published var user : User?
     @Published var loggedin = false
+    private var loggingOut = false
 
     func login(_ pesel : String, _ password : String, errorCallback : @escaping () -> Void, successCallback : @escaping () -> Void) {
         user = nil
@@ -105,13 +106,52 @@ final class LibraryService: ObservableObject {
         }.resume()
     }
     
-    func loadBooks(_ callback : @escaping ([Book]) -> Void) {
+    func loadBookRating(_ bookId : Int64, callback : @escaping (BookRating?) -> Void) {
+        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating/get") else {
+            NSLog("Invalid loadBookRating URL")
+            return
+        }
+        urlComponent.queryItems = [
+            URLQueryItem(name: "bookId", value: String(bookId))
+        ]
+        
+        let request = URLRequest(url: urlComponent.url!)
+
+        dataTask(request, callback)
+    }
+    
+    func saveBookRating(_ bookId : Int64, _ rating : Int32, callback : @escaping (BookRating) -> Void) {
+        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating/add") else {
+            NSLog("Invalid saveBookRating URL")
+            return
+        }
+        urlComponent.queryItems = [
+            URLQueryItem(name: "bookId", value: String(bookId)),
+            URLQueryItem(name: "rating", value: String(rating))
+        ]
+        
+        var request = URLRequest(url: urlComponent.url!)
+        request.httpMethod = "POST"
+        
+        dataTask(request, callback)
+    }
+    
+    func loadBooks(_ callback : @escaping ([BookWithCopies]) -> Void) {
         guard let url = URL(string: "\(Constants.baseUrl)/api/books/display") else {
             NSLog("Invalid loadBooks URL")
             return
         }
                 
-        fetchListDataTask(url, callback)
+        listDataTask(url, callback)
+    }
+    
+    func loadBooksWithRating(_ callback : @escaping ([BookWithRating]) -> Void) {
+        guard let url = URL(string: "\(Constants.baseUrl)/api/books/rating/getAll") else {
+            NSLog("Invalid loadBooksWithRating URL")
+            return
+        }
+                
+        listDataTask(url, callback)
     }
     
     func loadGenres(_ callback : @escaping ([Genre]) -> Void) {
@@ -120,7 +160,7 @@ final class LibraryService: ObservableObject {
             return
         }
                 
-        fetchListDataTask(url, callback)
+        listDataTask(url, callback)
     
     }
     
@@ -134,10 +174,14 @@ final class LibraryService: ObservableObject {
             URLQueryItem(name: "bookId", value: String(bookId))
         ]
         
-        fetchListDataTask(urlComponent.url!, callback)
+        listDataTask(urlComponent.url!, callback)
     }
     
-    private func fetchListDataTask<T : Decodable> (_ url : URL, _ callback : @escaping ([T]) -> Void) {
+    private func listDataTask<T : Decodable> (_ url : URL, _ callback : @escaping ([T]) -> Void) {
+        if (self.loggedin == false || self.loggingOut == true) {
+            return
+        }
+        
         let request = URLRequest(url: url)
 
         session!.dataTask(with: request) { data, response, error in
@@ -168,12 +212,50 @@ final class LibraryService: ObservableObject {
         }.resume()
     }
     
+    private func dataTask<T : Decodable> (_ request : URLRequest, _ callback : @escaping (T) -> Void) {
+        if (self.loggedin == false || self.loggingOut == true) {
+            return
+        }
+        
+        session!.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                NSLog("\(error!)")
+                return
+            }
+
+            if let httpStatus = response as? HTTPURLResponse {
+                if (httpStatus.statusCode == 401) {
+                    self.logout()
+                    return
+                }
+                if (httpStatus.statusCode >= 300) {
+                    return
+                }
+            }
+            var decodedResponse : T
+            do {
+                decodedResponse = try JSONDecoder().decode(T.self, from: data)
+            } catch {
+                NSLog("\(error)")
+                return
+            }
+            DispatchQueue.main.async {
+                callback(decodedResponse)
+            }
+        }.resume()
+    }
+    
     func logout() {
+        if (self.loggedin == false || self.loggingOut == true) {
+            return
+        }
+        self.loggingOut = true
         for cookie in session!.configuration.httpCookieStorage!.cookies! {
             session!.configuration.httpCookieStorage!.deleteCookie(cookie)
         }
         DispatchQueue.main.async {
             self.loggedin = false
+            self.loggingOut = false
             self.session = nil
         }
     }

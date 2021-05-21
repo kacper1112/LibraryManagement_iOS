@@ -11,7 +11,7 @@ import SwiftUI
 struct LoginView: View {
     @EnvironmentObject private var session: LibraryService
     @State private var pesel = "user"
-    @State private var password = "user"
+    @State private var password = "user1"
     @State private var incorrectDataToggle = false
     @State private var loginInProgress = false
     

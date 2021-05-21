@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import SwiftUIRefresh
 
 struct BrowseBooksView: View {
     @EnvironmentObject private var session: LibraryService
-
+    
+    @State private var isShowing = false
     @State private var booksLoaded = false
-    @State private var books = [Book]()
+    @State private var books = [BookWithCopies]()
     @State private var genres = [Genre]()
     
     var body: some View {
@@ -31,11 +33,23 @@ struct BrowseBooksView: View {
                         }
                     }
                     .navigationBarTitle("Browse")
+                    .pullToRefresh(isShowing: $isShowing) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            loadData()
+                        }
+                    }
                 }
             }
         }
-        .onAppear(perform: loadGenres)
-        .onAppear(perform: loadBooks)
+        .onAppear(perform: loadData)
+    }
+    
+    func loadData() {
+        booksLoaded = false
+        isShowing = false
+        
+        loadGenres()
+        loadBooks()
     }
     
     func findGenre(_ genreId:Int64) -> Genre {
@@ -59,7 +73,6 @@ struct BrowseBooksView: View {
             booksLoaded = true
         }
     }
-    
 }
 
 struct ContentView_Previews: PreviewProvider {
