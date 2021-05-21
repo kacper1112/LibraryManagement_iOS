@@ -11,6 +11,7 @@ final class LibraryService: ObservableObject {
     @Published var session: URLSession?
     @Published var user : User?
     @Published var loggedin = false
+    private var loggingOut = false
 
     func login(_ pesel : String, _ password : String, errorCallback : @escaping () -> Void, successCallback : @escaping () -> Void) {
         user = nil
@@ -105,8 +106,8 @@ final class LibraryService: ObservableObject {
         }.resume()
     }
     
-    func loadBookRating(_ bookId : Int64, callback : @escaping (BookRating) -> Void) {
-        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating") else {
+    func loadBookRating(_ bookId : Int64, callback : @escaping (BookRating?) -> Void) {
+        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating/get") else {
             NSLog("Invalid loadBookRating URL")
             return
         }
@@ -120,7 +121,7 @@ final class LibraryService: ObservableObject {
     }
     
     func saveBookRating(_ bookId : Int64, _ rating : Int32, callback : @escaping (BookRating) -> Void) {
-        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating") else {
+        guard var urlComponent = URLComponents(string: "\(Constants.baseUrl)/api/books/rating/add") else {
             NSLog("Invalid saveBookRating URL")
             return
         }
@@ -177,6 +178,10 @@ final class LibraryService: ObservableObject {
     }
     
     private func listDataTask<T : Decodable> (_ url : URL, _ callback : @escaping ([T]) -> Void) {
+        if (self.loggedin == false || self.loggingOut == true) {
+            return
+        }
+        
         let request = URLRequest(url: url)
 
         session!.dataTask(with: request) { data, response, error in
@@ -208,6 +213,10 @@ final class LibraryService: ObservableObject {
     }
     
     private func dataTask<T : Decodable> (_ request : URLRequest, _ callback : @escaping (T) -> Void) {
+        if (self.loggedin == false || self.loggingOut == true) {
+            return
+        }
+        
         session!.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 NSLog("\(error!)")
@@ -237,11 +246,16 @@ final class LibraryService: ObservableObject {
     }
     
     func logout() {
+        if (self.loggedin == false || self.loggingOut == true) {
+            return
+        }
+        self.loggingOut = true
         for cookie in session!.configuration.httpCookieStorage!.cookies! {
             session!.configuration.httpCookieStorage!.deleteCookie(cookie)
         }
         DispatchQueue.main.async {
             self.loggedin = false
+            self.loggingOut = false
             self.session = nil
         }
     }

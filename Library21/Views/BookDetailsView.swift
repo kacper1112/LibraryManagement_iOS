@@ -16,6 +16,7 @@ struct BookDetailsView: View {
     @State private var bookCopies = [BookCopy]()
     
     @State private var revealDetails = false
+    @State private var bookRated = false
     @State private var bookRating = 10.0
     
     var body: some View {
@@ -110,6 +111,10 @@ struct BookDetailsView: View {
                     }
                 }
                 .padding(5)
+            }.alert(isPresented: self.$bookRated) {
+                Alert(title: Text("Success"),
+                      message: Text("Book rated!"),
+                      dismissButton: .cancel(Text("Ok")))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -128,14 +133,16 @@ struct BookDetailsView: View {
     }
     
     func loadRating(_ bookId : Int64) {
-//        session.loadBookRating(bookId) { bookRating in
-//            self.bookRating = Double(bookRating.rating)
-//        }
+        session.loadBookRating(bookId) { bookRating in
+            let rated = bookRating == nil ? 10.0 : Double(bookRating!.rating)
+            self.bookRating = rated
+        }
     }
     
     func saveRating(_ bookId : Int64, _ rating : Int32) {
-//        session.saveBookRating(bookId, rating) { bookRating in
-//            self.bookRating = Double(bookRating.rating)
-//        }
+        session.saveBookRating(bookId, rating) { bookRating in
+            self.bookRating = Double(bookRating.rating)
+            self.bookRated = true
+        }
     }
 }

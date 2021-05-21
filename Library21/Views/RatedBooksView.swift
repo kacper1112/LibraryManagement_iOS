@@ -29,7 +29,7 @@ struct RatedBooksView: View {
                     List(books) { book in
                         let genre = findGenre(book.genreId)
                         NavigationLink(destination: BookDetailsView(book: book, genre: genre)) {
-                            Text("\(book.id)")
+                            BookWithRatingView(book: book, genre: genre)
                         }
                     }
                     .navigationBarTitle("Rated books")
