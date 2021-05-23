@@ -169,8 +169,7 @@ final class LibraryService: ObservableObject {
             return
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        let request = URLRequest(url: url)
         
         dataTask(request, callback)
     }

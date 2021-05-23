@@ -59,7 +59,7 @@ struct SuggestionsView: View {
         
         loadCurrentRequiredRatings()
         loadGenres()
-        loadBooks()
+        loadRecommendations()
     }
     
     func findGenre(_ genreId:Int64) -> Genre {
@@ -77,7 +77,7 @@ struct SuggestionsView: View {
         }
     }
     
-    func loadBooks() {
+    func loadRecommendations() {
         session.loadRecommendations { recommendations in
             self.recommendations = recommendations
             recommendationsLoaded = true
