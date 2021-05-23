@@ -14,6 +14,7 @@ struct LoginView: View {
     @State private var password = "user1"
     @State private var incorrectDataToggle = false
     @State private var loginInProgress = false
+    @State private var loginErrorMessage = ""
     
     var body: some View {
         VStack {
@@ -55,10 +56,7 @@ struct LoginView: View {
                         
             Button {
                 loginInProgress = true
-                session.login(self.pesel, self.password) {
-                    incorrectDataToggle.toggle()
-                    loginInProgress = false
-                } successCallback: {
+                session.login(self.pesel, self.password, errorCallback: errorCallback) {
                     loginInProgress = false
                 }
             } label: {
@@ -75,7 +73,13 @@ struct LoginView: View {
             .padding()
         }.padding(.horizontal, 40)
         .alert(isPresented: self.$incorrectDataToggle) {
-            Alert(title: Text("Login failed"), message: Text("Incorrect login credentials!"), dismissButton: .destructive(Text("Ok")))
+            Alert(title: Text("Login failed"), message: Text(loginErrorMessage), dismissButton: .destructive(Text("Ok")))
         }
+    }
+    
+    private func errorCallback(_ message : String?) {
+        self.incorrectDataToggle.toggle()
+        self.loginErrorMessage = message ?? "Incorrect login credentials!"
+        self.loginInProgress = false
     }
 }
