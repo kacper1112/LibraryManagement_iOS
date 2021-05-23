@@ -126,7 +126,7 @@ final class LibraryService: ObservableObject {
         
         let request = URLRequest(url: urlComponent.url!)
 
-        dataTask(request, callback)
+        nullableDataTask(request, callback)
     }
     
     func saveBookRating(_ bookId : Int64, _ rating : Int32, callback : @escaping (BookRating) -> Void) {
@@ -245,6 +245,7 @@ final class LibraryService: ObservableObject {
                 }
             }
             var decodedResponse : T
+            
             do {
                 decodedResponse = try JSONDecoder().decode(T.self, from: data)
             } catch {
@@ -252,6 +253,47 @@ final class LibraryService: ObservableObject {
                 self.logout()
                 return
             }
+            
+            DispatchQueue.main.async {
+                callback(decodedResponse)
+            }
+        }.resume()
+    }
+    
+    private func nullableDataTask<T : Decodable> (_ request : URLRequest, _ callback : @escaping (T?) -> Void) {
+        if (self.loggedin == false || self.loggingOut == true) {
+            return
+        }
+        
+        session!.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                NSLog("\(error!)")
+                self.logout()
+                return
+            }
+
+            if let httpStatus = response as? HTTPURLResponse {
+                if (httpStatus.statusCode == 401) {
+                    self.logout()
+                    return
+                }
+                if (httpStatus.statusCode >= 300) {
+                    return
+                }
+            }
+            
+            var decodedResponse : T?
+            
+            if !data.isEmpty {
+                do {
+                    decodedResponse = try JSONDecoder().decode(T.self, from: data)
+                } catch {
+                    NSLog("\(error)")
+                    self.logout()
+                    return
+                }
+            }
+            
             DispatchQueue.main.async {
                 callback(decodedResponse)
             }
