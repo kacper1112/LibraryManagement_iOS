@@ -154,6 +154,26 @@ final class LibraryService: ObservableObject {
         listDataTask(url, callback)
     }
     
+    func loadRecommendations(_ callback : @escaping ([BookWithCopies]) -> Void) {
+        guard let url = URL(string: "\(Constants.baseUrl)/api/books/recommendations") else {
+            NSLog("Invalid loadRecommendations URL")
+            return
+        }
+        
+        listDataTask(url, callback)
+    }
+    
+    func loadCurrentAndRequiredRatings(_ callback : @escaping (currentAndRequiredRatings) -> Void) {
+        guard let url = URL(string: "\(Constants.baseUrl)/api/books/recommendations/count") else {
+            NSLog("Invalid loadCurrentAndRequiredRatings")
+            return
+        }
+        
+        let request = URLRequest(url: url)
+        
+        dataTask(request, callback)
+    }
+    
     func loadBooksWithRating(_ callback : @escaping ([BookWithRating]) -> Void) {
         guard let url = URL(string: "\(Constants.baseUrl)/api/books/rating/getAll") else {
             NSLog("Invalid loadBooksWithRating URL")
