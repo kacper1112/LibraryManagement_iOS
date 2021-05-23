@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserCurrentAndRequiredRatings : Codable {
+struct currentAndRequiredRatings : Codable {
     var currentCount: Int64
     var requiredCount: Int64
     

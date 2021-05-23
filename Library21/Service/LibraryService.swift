@@ -163,7 +163,7 @@ final class LibraryService: ObservableObject {
         listDataTask(url, callback)
     }
     
-    func loadCurrentAndRequiredRatings(_ callback : @escaping (UserCurrentAndRequiredRatings) -> Void) {
+    func loadCurrentAndRequiredRatings(_ callback : @escaping (currentAndRequiredRatings) -> Void) {
         guard let url = URL(string: "\(Constants.baseUrl)/api/books/recommendations/count") else {
             NSLog("Invalid loadCurrentAndRequiredRatings")
             return

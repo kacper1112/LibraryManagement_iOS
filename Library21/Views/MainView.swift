@@ -15,7 +15,7 @@ struct MainView: View {
             TabView {
                 SuggestionsView()
                     .tabItem {
-                        Label("Suggestions", systemImage: "star")
+                        Label("Recommendations", systemImage: "star")
                     }
                 
                 BrowseBooksView()

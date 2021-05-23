@@ -29,6 +29,7 @@ struct SuggestionsView: View {
             } else if currentRatingsCount < requiredRatingsCount {
                 VStack {
                     Text("You need to rate \(requiredRatingsCount - currentRatingsCount) more books to be able to see recommendations")
+                        .multilineTextAlignment(.center)
                         .padding()
                 }
             } else {
@@ -39,7 +40,7 @@ struct SuggestionsView: View {
                             BookView(book: book, genre: genre)
                         }
                     }
-                    .navigationBarTitle("Browse")
+                    .navigationBarTitle("Recommendations")
                     .pullToRefresh(isShowing: $isShowing) {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             loadData()
