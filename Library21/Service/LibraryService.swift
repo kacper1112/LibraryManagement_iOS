@@ -32,7 +32,7 @@ final class LibraryService: ObservableObject {
         let loginData = "\(pesel):\(password)".data(using: String.Encoding.utf8)!
         let base64LoginData = loginData.base64EncodedString()
         
-        var request = URLRequest(url: urlComponent.url!, timeoutInterval: 10.0)
+        var request = URLRequest(url: urlComponent.url!)
         request.httpMethod = "GET"
         request.setValue("Basic \(base64LoginData)", forHTTPHeaderField: "Authorization")
 
