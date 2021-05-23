@@ -13,10 +13,11 @@ final class LibraryService: ObservableObject {
     @Published var loggedin = false
     private var loggingOut = false
 
-    func login(_ pesel : String, _ password : String, errorCallback : @escaping () -> Void, successCallback : @escaping () -> Void) {
+    func login(_ pesel : String, _ password : String, errorCallback : @escaping (String?) -> Void, successCallback : @escaping () -> Void) {
         user = nil
         if (session == nil) {
             let config = URLSessionConfiguration.default
+            config.waitsForConnectivity = false
             session = URLSession(configuration: config)
         }
         
@@ -31,20 +32,23 @@ final class LibraryService: ObservableObject {
         let loginData = "\(pesel):\(password)".data(using: String.Encoding.utf8)!
         let base64LoginData = loginData.base64EncodedString()
         
-        var request = URLRequest(url: urlComponent.url!)
+        var request = URLRequest(url: urlComponent.url!, timeoutInterval: 10.0)
         request.httpMethod = "GET"
         request.setValue("Basic \(base64LoginData)", forHTTPHeaderField: "Authorization")
 
         session!.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 NSLog("\(error!)")
+                DispatchQueue.main.async {
+                    errorCallback("Connection error.")
+                }
                 return
             }
 
             if let httpStatus = response as? HTTPURLResponse {
                 if (httpStatus.statusCode >= 300) {
                     DispatchQueue.main.async {
-                        errorCallback()
+                        errorCallback(nil)
                     }
                     return
                 }
@@ -54,6 +58,9 @@ final class LibraryService: ObservableObject {
                 decodedResponse = try JSONDecoder().decode(User.self, from: data)
             } catch {
                 NSLog("\(error)")
+                DispatchQueue.main.async {
+                    errorCallback("Connection error.")
+                }
                 return
             }
             
@@ -82,6 +89,7 @@ final class LibraryService: ObservableObject {
         session!.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 NSLog("\(error!)")
+                self.logout()
                 return
             }
 
@@ -96,6 +104,7 @@ final class LibraryService: ObservableObject {
                 decodedResponse = try JSONDecoder().decode(User.self, from: data)
             } catch {
                 NSLog("\(error)")
+                self.logout()
                 return
             }
             
@@ -187,6 +196,7 @@ final class LibraryService: ObservableObject {
         session!.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 NSLog("\(error!)")
+                self.logout()
                 return
             }
 
@@ -204,6 +214,7 @@ final class LibraryService: ObservableObject {
                 decodedResponse = try JSONDecoder().decode([T].self, from: data)
             } catch {
                 NSLog("\(error)")
+                self.logout()
                 return
             }
             DispatchQueue.main.async {
@@ -220,6 +231,7 @@ final class LibraryService: ObservableObject {
         session!.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 NSLog("\(error!)")
+                self.logout()
                 return
             }
 
@@ -237,6 +249,7 @@ final class LibraryService: ObservableObject {
                 decodedResponse = try JSONDecoder().decode(T.self, from: data)
             } catch {
                 NSLog("\(error)")
+                self.logout()
                 return
             }
             DispatchQueue.main.async {
