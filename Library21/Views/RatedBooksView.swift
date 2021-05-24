@@ -21,12 +21,16 @@ struct RatedBooksView: View {
             if !booksLoaded {
                 VStack {
                     Text("Loading books. Please wait...")
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                 }
             } else if books.count == 0 {
                 VStack {
                     Text("You have not rated any books yet.")
+                        .multilineTextAlignment(.center)
+                        .padding()
                 }
             } else {
                 NavigationView {

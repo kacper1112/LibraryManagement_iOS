@@ -23,6 +23,8 @@ struct SuggestionsView: View {
             if !recommendationsLoaded || !currentAndRequiredRatingsLoaded {
                 VStack {
                     Text("Loading books. Please wait...")
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                 }
@@ -38,6 +40,8 @@ struct SuggestionsView: View {
             } else if recommendations.count == 0 {
                 VStack {
                     Text("We could not find any recommendations for you.")
+                        .multilineTextAlignment(.center)
+                        .padding()
                 }
             } else {
                 NavigationView {
