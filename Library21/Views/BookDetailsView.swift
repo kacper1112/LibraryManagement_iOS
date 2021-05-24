@@ -19,8 +19,9 @@ struct BookDetailsView: View {
     
     @State private var bookCopies = [BookCopy]()
     @State private var revealDetails = false
-    @State private var bookRated = false
-    @State private var bookRating = 10.0
+    @State private var bookRatedAlert = false
+    @State private var isBookRated = false
+    @State private var bookRating = 0.0
     
     var body: some View {
         ScrollView {
@@ -56,12 +57,17 @@ struct BookDetailsView: View {
                     .padding(.bottom, 5)
                 
                 VStack {
+                    if (!isBookRated) {
+                        Text("You have not rated this book yet.")
+                            .font(.subheadline)
+                            .padding(.bottom, 5)
+                    }
                     HStack {
                         Spacer().overlay(
                             Text("Your rating:")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         )
-                        Text("\(Int(bookRating))")
+                        Text(bookRating == 0.0 ? "-" : "\(Int(bookRating))")
                             .padding(.horizontal)
                         Spacer().overlay(
                             Button {
@@ -69,6 +75,7 @@ struct BookDetailsView: View {
                             } label : {
                                 Text("Save")
                             }
+                            .disabled(bookRating == 0.0)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                         )
                     }
@@ -114,7 +121,7 @@ struct BookDetailsView: View {
                     }
                 }
                 .padding(5)
-            }.alert(isPresented: self.$bookRated) {
+            }.alert(isPresented: self.$bookRatedAlert) {
                 Alert(title: Text("Success"),
                       message: Text("Book rated!"),
                       dismissButton: .cancel(Text("Ok"), action: ratedAlertCancelAction))
@@ -149,15 +156,17 @@ struct BookDetailsView: View {
     
     func loadRating(_ bookId : Int64) {
         session.loadBookRating(bookId) { bookRating in
-            let rated = bookRating == nil ? 10.0 : Double(bookRating!.rating)
+            let rated = bookRating == nil ? 0.0 : Double(bookRating!.rating)
             self.bookRating = rated
+            self.isBookRated = bookRating != nil
         }
     }
     
     func saveRating(_ bookId : Int64, _ rating : Int32) {
         session.saveBookRating(bookId, rating) { bookRating in
             self.bookRating = Double(bookRating.rating)
-            self.bookRated = true
+            self.isBookRated = true
+            self.bookRatedAlert = true
         }
     }
 }

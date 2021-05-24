@@ -21,6 +21,8 @@ struct BrowseBooksView: View {
             if !booksLoaded {
                 VStack {
                     Text("Loading books. Please wait...")
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                 }
