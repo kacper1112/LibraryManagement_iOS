@@ -28,7 +28,9 @@ struct RatedBooksView: View {
                 NavigationView {
                     List(books) { book in
                         let genre = findGenre(book.genreId)
-                        NavigationLink(destination: BookDetailsView(book: book, genre: genre)) {
+                        NavigationLink(destination: BookDetailsView(book: book,
+                                                                    genre: genre,
+                                                                    ratingUpdateCallback: reloadBooks)) {
                             BookWithRatingView(book: book, genre: genre)
                         }
                     }
@@ -49,6 +51,11 @@ struct RatedBooksView: View {
         isShowing = false
         
         loadGenres()
+        loadBooks()
+    }
+    
+    func reloadBooks() {
+        booksLoaded = false
         loadBooks()
     }
     

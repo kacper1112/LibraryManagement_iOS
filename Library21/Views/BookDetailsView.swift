@@ -10,11 +10,14 @@ import SwiftUI
 
 struct BookDetailsView: View {
     @EnvironmentObject private var session: LibraryService
+    @Environment(\.presentationMode) var presentation
     
     let book: Book
     let genre: Genre
-    @State private var bookCopies = [BookCopy]()
+    var ratingUpdateCallback: (() -> Void)?
+    @State private var runCallback = false
     
+    @State private var bookCopies = [BookCopy]()
     @State private var revealDetails = false
     @State private var bookRated = false
     @State private var bookRating = 10.0
@@ -114,7 +117,7 @@ struct BookDetailsView: View {
             }.alert(isPresented: self.$bookRated) {
                 Alert(title: Text("Success"),
                       message: Text("Book rated!"),
-                      dismissButton: .cancel(Text("Ok")))
+                      dismissButton: .cancel(Text("Ok"), action: ratedAlertCancelAction))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -123,6 +126,18 @@ struct BookDetailsView: View {
         .onAppear {
             loadCopies(book.id)
             loadRating(book.id)
+        }
+        .onDisappear() {
+            if runCallback == true {
+                ratingUpdateCallback!()
+            }
+        }
+    }
+    
+    func ratedAlertCancelAction() {
+        if ratingUpdateCallback != nil {
+            presentation.wrappedValue.dismiss()
+            self.runCallback = true
         }
     }
     
