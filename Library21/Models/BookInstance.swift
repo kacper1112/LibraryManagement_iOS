@@ -25,7 +25,7 @@ struct BookCopy : Identifiable, Codable {
             if (dueDate == nil) {
                 return nil
             }
-            return DateFormatter.iso8601Full.date(from: dueDate!)!
+            return DateFormatter.iso8601.date(from: dueDate!)!
         }
     }
     
