@@ -28,9 +28,16 @@ struct SuggestionsView: View {
                 }
             } else if currentRatingsCount < requiredRatingsCount {
                 VStack {
-                    Text("You need to rate \(requiredRatingsCount - currentRatingsCount) more books to be able to see recommendations")
+                    (Text("You need to rate ")
+                        + Text("\(requiredRatingsCount - currentRatingsCount)")
+                        .bold()
+                        + Text(" more books to be able to see recommendations."))
                         .multilineTextAlignment(.center)
                         .padding()
+                }
+            } else if recommendations.count == 0 {
+                VStack {
+                    Text("We could not find any recommendations for you.")
                 }
             } else {
                 NavigationView {

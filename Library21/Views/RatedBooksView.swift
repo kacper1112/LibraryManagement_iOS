@@ -24,6 +24,10 @@ struct RatedBooksView: View {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                 }
+            } else if books.count == 0 {
+                VStack {
+                    Text("You have not rated any books yet.")
+                }
             } else {
                 NavigationView {
                     List(books) { book in
